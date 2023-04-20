@@ -1,0 +1,39 @@
+cmake_minimum_required(VERSION 3.25)
+project(SqlDb)
+
+set(CMAKE_CXX_STANDARD 17)
+
+include(GenerateExportHeader)
+
+option(SQLDB_BUILD_SHARED_LIB "Build shared libs?" TRUE)
+set(SQLDB_BUILD_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/build/${CMAKE_SYSTEM_NAME}/${CMAKE_SYSTEM_PROCESSOR}/${CMAKE_BUILD_TYPE}" CACHE STRING "Output directory for built binaries")
+
+add_definitions(-DSQLDB_REPO_PATH="${CMAKE_SOURCE_DIR}")
+
+# Conan
+include(cmake/conan.cmake)
+set(ENV{CONAN_IMPORT_PATH} "${SQLDB_BUILD_OUTPUT_DIR}")
+conan_cmake_autodetect(settings)
+conan_cmake_run(
+    BASIC_SETUP
+    KEEP_RPATHS
+    CMAKE_TARGETS
+    BUILD missing
+    CONANFILE ${CMAKE_SOURCE_DIR}/conanfile.py
+    SETTINGS ${settings}
+)
+set(CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR} ${CMAKE_MODULE_PATH})
+set(CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR} ${CMAKE_PREFIX_PATH})
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+
+# Cmake settings
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_DEBUG ${SQLDB_BUILD_OUTPUT_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE ${SQLDB_BUILD_OUTPUT_DIR})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${SQLDB_BUILD_OUTPUT_DIR})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${SQLDB_BUILD_OUTPUT_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${SQLDB_BUILD_OUTPUT_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${SQLDB_BUILD_OUTPUT_DIR})
+
+# Sub projects
+add_subdirectory(src/SqlDbLib)
+add_subdirectory(src/SqlDb)

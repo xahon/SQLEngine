@@ -1,0 +1,42 @@
+<root> ::= <queries>
+
+<query> ::= <select_query> | <insert_query> | <update_query> | <delete_query>
+<queries> ::= <query> ";" (<query_list>)* | <query>
+<query_list> ::= <queries>
+
+<select_query> ::= <select> <from> (<where>)?
+<select> ::= "SELECT" (<columns>)?
+<from> ::= "FROM" <tables>
+<where> ::= "WHERE" <cmp_compound>
+
+<insert_query> ::= "INSERT" "INTO" <table> "(" <columns> ")" "VALUES" "(" <values> ")"
+
+<update_query> ::= "UPDATE" <table> "SET" <set> (<where>)?
+
+<delete_query> ::= "DELETE" "FROM" <table> (<where>)?
+
+<set> ::= <column> "=" <value> (<comma_set>)*
+<comma_set> ::= "," <set>
+
+<column> ::= <identifier> (<period_column>)* | "`" <identifier> "`" (<period_column>)*
+<columns> ::= <column> (<comma_columns>)*
+<comma_columns> ::= "," <columns>
+<period_column> ::= "." <identifier>
+
+<table> ::= <identifier> | "`" <identifier> "`"
+<tables> ::= <table> (<comma_tables>)*
+<comma_tables> ::= "," <tables>
+
+<cmp_compound> ::= <cmp> "AND" <cmp_compound> | <cmp> "OR" <cmp_compound> | <cmp>
+<cmp> ::= <column> <operator> <value>
+
+<value> ::= <string> | <number> | <identifier> | <boolean>
+<values> ::= <value> (<value_list_comma>)*
+<value_list_comma> ::= "," <values>
+
+<string> ::= @STRING@
+<identifier> ::= @IDENTIFIER@
+<number> ::= @NUMBER@
+<boolean> ::= @BOOLEAN@
+<keyword> ::= @KEYWORD@
+<operator> ::= @OPERATOR@
